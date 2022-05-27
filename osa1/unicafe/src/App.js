@@ -12,6 +12,10 @@ const App = () => {
       <button>Good</button>
       <button>Neutral</button>
       <button>Bad</button>
+      <h1>Statistics</h1>
+      <p>Good: </p>
+      <p>Neutral: </p>
+      <p>Bad: </p>
     </div>
   )
 }
