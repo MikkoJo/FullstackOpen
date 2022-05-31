@@ -1,31 +1,40 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react'
 
-const StatisticLine = ({ text, value }) => <>{text} {value}<br/></>
+const StatisticLine = ({ text, value, extra = '' }) => (
+  <tr>
+    <td>{text}</td>
+    <td>{value}{extra}</td>
+  </tr>
+)
 
 const Statistics = (props) => {
   const { good, neutral, bad } = props
+
   const all = () => good + neutral + bad
   const average = () => all() !== 0 ? (good - bad) / all() : 0
   const positive = () => all() !== 0 ? good / all() * 100 : 0
+
   if (all() === 0) {
     return <p>No feedback given!</p>
   }
   return (
-    <div>
-      <StatisticLine text='Good:' value={good} />
-      <StatisticLine text='Neutral:' value={neutral} />
-      <StatisticLine text='Bad:' value={bad} />
-      <StatisticLine text='All:' value={all()} />
-      <StatisticLine text='Average:' value={average()} />
-      <StatisticLine text='Positive:' value={positive()} />
-    </div>
+    <table>
+      <tbody>
+        <StatisticLine text='Good:' value={good} />
+        <StatisticLine text='Neutral:' value={neutral} />
+        <StatisticLine text='Bad:' value={bad} />
+        <StatisticLine text='All:' value={all()} />
+        <StatisticLine text='Average:' value={average().toFixed(1)} />
+        <StatisticLine text='Positive:' value={positive().toFixed(1)} extra=' %' />
+      </tbody>
+    </table>
   )
 }
 
 const Button = (props) => {
   const { text, handleClick } = props
-  return <button onClick={handleClick}>{text}</button>
+  return <button style={{ marginRight: 5 }} onClick={handleClick}>{text}</button>
 }
 
 const App = () => {
@@ -33,12 +42,6 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-
-  // const all = () => good + neutral + bad
-
-  // const average = () => (good - bad) / all()
-
-  // const positive = () => good / all() * 100
 
   return (
     <div>
