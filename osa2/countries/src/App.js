@@ -18,58 +18,37 @@ const Persons = ({ persons }) => (
   </div>
 )
 
-const PersonForm = ({
-  addName,
-  newName,
-  handleNameChange,
-  newNumber,
-  handleNumberChange,
-}) => (
-  <form onSubmit={addName}>
-    <div>
-      name: <input value={newName} onChange={handleNameChange} />
-    </div>
-    <div>
-      number:
-      <input value={newNumber} onChange={handleNumberChange} />
-    </div>
-    <div>
-      <button type='submit'>add</button>
-    </div>
-  </form>
-)
-
-const Filter = ({ filterName, handleFilterChange }) => (
+const Filter = ({ filterCountry, handleFilterChange }) => (
   <div>
-    <h3>filter shown with</h3>
-    <input value={filterName} onChange={handleFilterChange} />
+    <p>
+      <label htmlFor='country'>Find countries</label>
+      <input
+        name='country'
+        value={filterCountry}
+        onChange={handleFilterChange}
+      />
+    </p>
   </div>
 )
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [countries, setCountries] = useState([])
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/persons')
-      .then((response) => setPersons(response.data))
+      .get('https://restcountries.com/v3.1/all')
+      .then((response) => setCountries(response.data))
   }, [])
-  // const [persons, setPersons] = useState([
-  //   { name: 'Arto Hellas', number: '040-123456' },
-  //   { name: 'Ada Lovelace', number: '39-44-5323523' },
-  //   { name: 'Dan Abramov', number: '12-43-234345' },
-  //   { name: 'Mary Poppendieck', number: '39-23-6423122' },
-  // ])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filterName, setFilterName] = useState('')
+  const [filterCountry, setfilterCountry] = useState('')
 
   const addName = (event) => {
     event.preventDefault()
     // console.log(event)
     if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      alert(` is already added to phonebook`)
       setNewName('')
       setNewNumber('')
       return
@@ -96,23 +75,28 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     console.log(event.target.value)
-    setFilterName(event.target.value)
+    setfilterCountry(event.target.value)
   }
 
-  const personsToShow = () => {
-    if (filterName === '') {
-      return persons
+  const countriesToShow = () => {
+    if (filterCountry === '') {
+      return ''
     } else {
       return persons.filter((person) =>
-        person.name.toLocaleLowerCase().includes(filterName.toLocaleLowerCase())
+        person.name
+          .toLocaleLowerCase()
+          .includes(filterCountry.toLocaleLowerCase())
       )
     }
   }
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <Filter filterName={filterName} handleFilterChange={handleFilterChange} />
+      <h1>Country Information</h1>
+      <Filter
+        filterCountry={filterCountry}
+        handleFilterChange={handleFilterChange}
+      />
       <h3>Add a new</h3>
       <PersonForm
         addName={addName}
