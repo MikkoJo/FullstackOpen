@@ -120,3 +120,6 @@ const App = () => {
 }
 
 export default App
+/*
+https://api.meteomatics.com/2022-06-13T15:15:00.000+03:00/t_2m:C,wind_speed_w_50hPa:ms,wind_dir_10m:d,weather_symbol_1h:idx/60.1674881,24.9427473/json?model=mix
+*/
