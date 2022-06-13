@@ -1,22 +1,50 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Person = ({ person }) => {
-  // console.log(person)
-  return (
-    <p>
-      {person.name} {person.number}
-    </p>
-  )
-}
-
-const Persons = ({ persons }) => (
+const Country = ({ country }) => (
   <div>
-    {persons.map((person) => (
-      <Person key={person.name} person={person} />
-    ))}
+    <h2>{country.name.common}</h2>
+    <ul style={{ listStyleType: 'none', padding: 0 }}>
+      <li>Capital: {country.capital}</li>
+      <li>Area: {country.area} km&sup2;</li>
+    </ul>
+    <h4>Languages:</h4>
+    {/* {console.log(Object.entries(country.languages))}
+    {Object.entries(country.languages).forEach(([key, value]) =>
+      console.log(`${key}: ${value}`)
+    )} */}
+    <ul>
+      {Object.entries(country.languages).map(([key, lang]) => (
+        <Language key={key} lang={lang} />
+      ))}
+    </ul>
+    <Flag source={country.flags.svg} />
   </div>
 )
+
+const Language = ({ lang }) => <li>{lang}</li>
+
+const Flag = ({ source }) => {
+  const flagStyle = { height: 200, border: 'solid black', padding: 4 }
+  return <img src={source} alt='flag' style={flagStyle} />
+}
+
+const CountryName = ({ country }) => <p>{country.name.common}</p>
+
+const Countries = ({ countries }) => {
+  if (countries.length > 10) {
+    return <p>Too many matches, specify another filter</p>
+  } else if (countries.length === 1) {
+    return <Country country={countries[0]} />
+  }
+  return (
+    <div>
+      {countries.map((country) => (
+        <CountryName key={country.ccn3} country={country} />
+      ))}
+    </div>
+  )
+}
 
 const Filter = ({ filterCountry, handleFilterChange }) => (
   <div>
@@ -40,50 +68,19 @@ const App = () => {
       .then((response) => setCountries(response.data))
   }, [])
 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
   const [filterCountry, setfilterCountry] = useState('')
 
-  const addName = (event) => {
-    event.preventDefault()
-    // console.log(event)
-    if (persons.find((person) => person.name === newName)) {
-      alert(` is already added to phonebook`)
-      setNewName('')
-      setNewNumber('')
-      return
-    }
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-    }
-    console.log('newPerson: ', newPerson)
-    setPersons(persons.concat(newPerson))
-    setNewName('')
-    setNewNumber('')
-  }
-
-  const handleNameChange = (event) => {
-    // console.log(event.target.value)
-    setNewName(event.target.value)
-  }
-
-  const handleNumberChange = (event) => {
-    // console.log(event.target.value)
-    setNewNumber(event.target.value)
-  }
-
   const handleFilterChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setfilterCountry(event.target.value)
   }
 
   const countriesToShow = () => {
     if (filterCountry === '') {
-      return ''
+      return []
     } else {
-      return persons.filter((person) =>
-        person.name
+      return countries.filter((country) =>
+        country.name.common
           .toLocaleLowerCase()
           .includes(filterCountry.toLocaleLowerCase())
       )
@@ -97,16 +94,8 @@ const App = () => {
         filterCountry={filterCountry}
         handleFilterChange={handleFilterChange}
       />
-      <h3>Add a new</h3>
-      <PersonForm
-        addName={addName}
-        newName={newName}
-        newNumber={newNumber}
-        handleNameChange={handleNameChange}
-        handleNumberChange={handleNumberChange}
-      />
-      <h2>Numbers</h2>
-      <Persons persons={personsToShow()} />
+      {/* <h3>Numbers</h3> */}
+      <Countries countries={countriesToShow()} />
     </div>
   )
 }
