@@ -29,9 +29,21 @@ const Flag = ({ source }) => {
   return <img src={source} alt='flag' style={flagStyle} />
 }
 
-const CountryName = ({ country }) => <p>{country.name.common}</p>
+const CountryName = ({ country, setfilterCountry }) => {
+  const handleClick = () => setfilterCountry(country.name.common)
 
-const Countries = ({ countries }) => {
+  return (
+    <p>
+      {country.name.common}
+      <button value={country.ccn3} onClick={handleClick}>
+        show
+      </button>
+    </p>
+  )
+}
+
+const Countries = ({ countries, setfilterCountry }) => {
+  console.log(countries)
   if (countries.length > 10) {
     return <p>Too many matches, specify another filter</p>
   } else if (countries.length === 1) {
@@ -40,7 +52,11 @@ const Countries = ({ countries }) => {
   return (
     <div>
       {countries.map((country) => (
-        <CountryName key={country.ccn3} country={country} />
+        <CountryName
+          key={country.ccn3}
+          country={country}
+          setfilterCountry={setfilterCountry}
+        />
       ))}
     </div>
   )
@@ -51,6 +67,7 @@ const Filter = ({ filterCountry, handleFilterChange }) => (
     <p>
       <label htmlFor='country'>Find countries</label>
       <input
+        type='search'
         name='country'
         value={filterCountry}
         onChange={handleFilterChange}
@@ -94,8 +111,10 @@ const App = () => {
         filterCountry={filterCountry}
         handleFilterChange={handleFilterChange}
       />
-      {/* <h3>Numbers</h3> */}
-      <Countries countries={countriesToShow()} />
+      <Countries
+        countries={countriesToShow()}
+        setfilterCountry={setfilterCountry}
+      />
     </div>
   )
 }
