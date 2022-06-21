@@ -13,7 +13,7 @@ const Person = ({ person }) => {
 const Persons = ({ persons }) => (
   <div>
     {persons.map((person) => (
-      <Person key={person.name} person={person} />
+      <Person key={person.id} person={person} />
     ))}
   </div>
 )
@@ -48,10 +48,12 @@ const Filter = ({ filterName, handleFilterChange }) => (
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const baseUrl = 'http://localhost:3001/persons'
 
   useEffect(() => {
+    // eslint-disable-next-line prettier/prettier
     axios
-      .get('http://localhost:3001/persons')
+      .get(baseUrl)
       .then((response) => setPersons(response.data))
   }, [])
   // const [persons, setPersons] = useState([
@@ -78,10 +80,16 @@ const App = () => {
       name: newName,
       number: newNumber,
     }
-    console.log('newPerson: ', newPerson)
-    setPersons(persons.concat(newPerson))
-    setNewName('')
-    setNewNumber('')
+
+    // eslint-disable-next-line prettier/prettier
+    axios
+      .post(baseUrl, newPerson)
+      .then((response) => {
+      console.log('newPerson: ', response.data)
+      setPersons(persons.concat(response.data))
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   const handleNameChange = (event) => {
