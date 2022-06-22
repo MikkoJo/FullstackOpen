@@ -1,19 +1,31 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
-const Person = ({ person }) => {
+const Person = ({ person, handleDeleteClick }) => {
   // console.log(person)
   return (
     <p>
-      {person.name} {person.number}
+      {person.name} {person.number}&nbsp;
+      <button
+        type='button'
+        value={person.id}
+        onClick={handleDeleteClick}
+        name={person.name}
+      >
+        Delete
+      </button>
     </p>
   )
 }
 
-const Persons = ({ persons }) => (
+const Persons = ({ persons, handleDeleteClick }) => (
   <div>
     {persons.map((person) => (
-      <Person key={person.id} person={person} />
+      <Person
+        key={person.id}
+        person={person}
+        handleDeleteClick={handleDeleteClick}
+      />
     ))}
   </div>
 )
@@ -48,13 +60,10 @@ const Filter = ({ filterName, handleFilterChange }) => (
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const baseUrl = 'http://localhost:3001/persons'
 
   useEffect(() => {
     // eslint-disable-next-line prettier/prettier
-    axios
-      .get(baseUrl)
-      .then((response) => setPersons(response.data))
+    personService.getAll().then((initialPersons) => setPersons(initialPersons))
   }, [])
   // const [persons, setPersons] = useState([
   //   { name: 'Arto Hellas', number: '040-123456' },
@@ -82,11 +91,9 @@ const App = () => {
     }
 
     // eslint-disable-next-line prettier/prettier
-    axios
-      .post(baseUrl, newPerson)
-      .then((response) => {
-      console.log('newPerson: ', response.data)
-      setPersons(persons.concat(response.data))
+    personService.create(newPerson).then((returnedPerson) => {
+      console.log('newPerson: ', returnedPerson)
+      setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
     })
@@ -105,6 +112,20 @@ const App = () => {
   const handleFilterChange = (event) => {
     console.log(event.target.value)
     setFilterName(event.target.value)
+  }
+
+  const handleDeleteClick = (event) => {
+    // console.log(event.target.value)
+    if (window.confirm(`Delete ${event.target.name} ?`)) {
+      // eslint-disable-next-line prettier/prettier
+      personService
+        .remove(event.target.value)
+        .then(() => {
+        setPersons(
+          persons.filter((person) => person.id !== +event.target.value)
+        )
+      })
+    }
   }
 
   const personsToShow = () => {
@@ -130,7 +151,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow()} />
+      <Persons
+        persons={personsToShow()}
+        handleDeleteClick={handleDeleteClick}
+      />
     </div>
   )
 }
