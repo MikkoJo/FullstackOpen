@@ -79,12 +79,24 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     // console.log(event)
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
-      setNewNumber('')
-      return
+    const existingPerson = persons.find((person) => person.name === newName)
+    if (existingPerson) {
+      if (
+        confirm(
+          `${newName} is already added to phonebook, replace the old number with the new one?`
+        )
+      ) {
+        // Lots of copy-paste
+        const updatedPerson = { ...existingPerson, number: newNumber}
+        personService.update(updatedPerson)
+
+        setNewName('')
+        setNewNumber('')
+        return
+      }
+      // alert(`${newName} is already added to phonebook`)
     }
+
     const newPerson = {
       name: newName,
       number: newNumber,
