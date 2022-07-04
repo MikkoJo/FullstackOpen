@@ -90,18 +90,31 @@ const App = () => {
         )
       ) {
         const updatedPerson = { ...existingPerson, number: newNumber }
-        personService.update(updatedPerson).then((returnedPerson) => {
-          setPersons(
-            persons.map((person) =>
-              person.id !== returnedPerson.id ? person : updatedPerson
+        personService
+          .update(updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== returnedPerson.id ? person : updatedPerson
+              )
             )
-          )
-          setMessage(`Updated ${updatedPerson.name}`)
-          setTimeout(() => setMessage(null), 5000)
-          setNewName('')
-          setNewNumber('')
-        })
+            setMessage(`Updated ${updatedPerson.name}`)
+            setTimeout(() => setMessage(null), 5000)
+          })
+          .catch(() => {
+            setPersons(
+              persons.filter((person) => person.id !== updatedPerson.id)
+            )
+            setIsError(true)
+            setMessage(`${updatedPerson.name} is already removed from server`)
+            setTimeout(() => {
+              setMessage(null)
+              setIsError(false)
+            }, 5000)
+          })
       }
+      setNewName('')
+      setNewNumber('')
       return
     }
 
