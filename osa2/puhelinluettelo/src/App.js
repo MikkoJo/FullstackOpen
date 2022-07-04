@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const Person = ({ person, handleDeleteClick }) => {
   // console.log(person)
@@ -75,6 +76,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [message, setMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   const addName = (event) => {
     event.preventDefault()
@@ -93,6 +96,8 @@ const App = () => {
               person.id !== returnedPerson.id ? person : updatedPerson
             )
           )
+          setMessage(`Updated ${updatedPerson.name}`)
+          setTimeout(() => setMessage(null), 5000)
           setNewName('')
           setNewNumber('')
         })
@@ -110,6 +115,8 @@ const App = () => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setMessage(`Added ${returnedPerson.name}`)
+      setTimeout(() => setMessage(null), 5000)
     })
   }
 
@@ -134,10 +141,22 @@ const App = () => {
       personService
         .remove(event.target.value)
         .then(() => {
-        setPersons(
-          persons.filter((person) => person.id !== +event.target.value)
-        )
-      })
+          setPersons(
+            persons.filter((person) => person.id !== +event.target.value)
+          )
+          setMessage(`${event.target.name} is removed from phoneBook`)
+        })
+        .catch(() => {
+          setPersons(
+            persons.filter((person) => person.id !== +event.target.value)
+          )
+          setIsError(true)
+          setMessage(`${event.target.name} is already removed from server`)
+        })
+      setTimeout(() => {
+        setMessage(null)
+        setIsError(false)
+      }, 5000)
     }
   }
 
@@ -154,6 +173,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} isError={isError} />
       <Filter filterName={filterName} handleFilterChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm
