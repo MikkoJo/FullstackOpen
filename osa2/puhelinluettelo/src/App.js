@@ -86,15 +86,18 @@ const App = () => {
           `${newName} is already added to phonebook, replace the old number with the new one?`
         )
       ) {
-        // Lots of copy-paste
-        const updatedPerson = { ...existingPerson, number: newNumber}
-        personService.update(updatedPerson)
-
-        setNewName('')
-        setNewNumber('')
-        return
+        const updatedPerson = { ...existingPerson, number: newNumber }
+        personService.update(updatedPerson).then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== returnedPerson.id ? person : updatedPerson
+            )
+          )
+          setNewName('')
+          setNewNumber('')
+        })
       }
-      // alert(`${newName} is already added to phonebook`)
+      return
     }
 
     const newPerson = {
@@ -104,7 +107,6 @@ const App = () => {
 
     // eslint-disable-next-line prettier/prettier
     personService.create(newPerson).then((returnedPerson) => {
-      console.log('newPerson: ', returnedPerson)
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
@@ -122,7 +124,6 @@ const App = () => {
   }
 
   const handleFilterChange = (event) => {
-    console.log(event.target.value)
     setFilterName(event.target.value)
   }
 
