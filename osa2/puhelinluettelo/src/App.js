@@ -155,13 +155,13 @@ const App = () => {
         .remove(event.target.value)
         .then(() => {
           setPersons(
-            persons.filter((person) => person.id !== +event.target.value)
+            persons.filter((person) => person.id !== event.target.value)
           )
           setMessage(`${event.target.name} is removed from phoneBook`)
         })
         .catch(() => {
           setPersons(
-            persons.filter((person) => person.id !== +event.target.value)
+            persons.filter((person) => person.id !== event.target.value)
           )
           setIsError(true)
           setMessage(`${event.target.name} is already removed from server`)
