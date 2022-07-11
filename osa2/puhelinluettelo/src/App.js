@@ -124,13 +124,24 @@ const App = () => {
     }
 
     // eslint-disable-next-line prettier/prettier
-    personService.create(newPerson).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      setNewName('')
-      setNewNumber('')
-      setMessage(`Added ${returnedPerson.name}`)
-      setTimeout(() => setMessage(null), 5000)
-    })
+    personService
+      .create(newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+        setMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => setMessage(null), 5000)
+      })
+      .catch((error) => {
+        console.log(error)
+        setIsError(true)
+        setMessage(`Error: ${error.response.data.error}`)
+        setTimeout(() => {
+          setMessage(null)
+          setIsError(false)
+        }, 5000)
+      })
   }
 
   const handleNameChange = (event) => {
