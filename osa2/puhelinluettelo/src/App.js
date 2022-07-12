@@ -101,12 +101,16 @@ const App = () => {
             setMessage(`Updated ${updatedPerson.name}`)
             setTimeout(() => setMessage(null), 5000)
           })
-          .catch(() => {
-            setPersons(
-              persons.filter((person) => person.id !== updatedPerson.id)
-            )
+          .catch((error) => {
             setIsError(true)
-            setMessage(`${updatedPerson.name} is already removed from server`)
+            if (error.response.data.name === 'notFound') {
+              setPersons(
+                persons.filter((person) => person.id !== updatedPerson.id)
+              )
+              setMessage(`${updatedPerson.name} is already removed from server`)
+            } else {
+              setMessage(`Error: ${error.response.data.error}`)
+            }
             setTimeout(() => {
               setMessage(null)
               setIsError(false)
